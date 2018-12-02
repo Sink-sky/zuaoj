@@ -1,0 +1,175 @@
+			{% extends 'base.html' %}
+
+			{% block content %}
+			<div class="container">
+				<div class="col-md-12 base-boder">
+					{% if competition %}
+					<br>
+					<ul class="nav nav-tabs">
+						<li><a href="/competition/{{ competition['competition_id'] }}/">题目列表</a></li>
+						<li class="dropdown active">
+							<a class="dropdown-toggle" data-toggle="dropdown">题目信息 <span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								{% for i in range(competition['problem_count']) %}
+								<li>
+									<a href="/competition/{{ competition['competition_id'] }}/{{ i+1 }}">{{ i+1 }}</a>
+								</li>
+								{% endfor %}
+							</ul>
+						</li>
+						<li><a href="/competition/{{ competition['competition_id'] }}/rank/">排名</a></li>
+						<li><a href="/competition/{{ competition['competition_id'] }}/history/">提交列表</a></li>
+					</ul>
+					{% endif %}
+					<div class="col-md-12" style="background:#FFFFFF">
+						<h3>{{ problem['title'] }}</h3>
+						<div class="row">
+							<p class="col-md-4">From:{{ problem['author'] }}</p>
+							<p class="col-md-4">Time Limit:{{ problem['time_limit'] }}ms</p>
+							<p class="col-md-4">Memory Limit:{{ problem['memory_limit'] }}kb</p>
+						</div>
+						<p><strong>题目描述:</strong></p>
+						<p>{{ problem['description']|safe }}</p>
+						<p><strong>输入格式:</strong></p>
+						<p>{{ problem['input_specification']|safe }}</p>
+						<p><strong>输出格式:</strong></p>
+						<p>{{ problem['output_specification']|safe }}</p>
+						<p><strong>输入样例:</strong></p>
+						<pre><code class="pull-left">{{ problem['sample_input']|safe }}</code></pre>
+						<p><strong>输出样例:</strong></p>
+						<pre><code class="pull-left">{{ problem['sample_output']|safe }}</code></pre>
+						<div class="btn-group">
+							<button id="language" value="{{ language_list[0]['value'] }}" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+								{{ language_list[0]['language'] }}&nbsp;({{ language_list[0]['information'] }})
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								{% for language in language_list %}
+								<li>
+									<a value="{{ language['value'] }}" onclick="switch_language(this)">
+									{{ language['language'] }}&nbsp;({{ language['information'] }})
+									</a>
+								</li>
+								{% endfor %}
+							</ul>
+						</div>
+						<pre id="code" class="ace_editor" style="min-height:400px">
+							<textarea class="ace_text-input"></textarea>
+						</pre>
+						<script>
+							//初始化对象
+							editor = ace.edit("code");
+							//设置风格和语言（更多风格和语言，请到github上相应目录查看）
+							theme = "clouds"
+							language = "c_cpp"
+							editor.session.setMode("ace/mode/" + language);
+							//字体大小
+							editor.$blockScrolling = Infinity;
+							editor.setFontSize(17);
+							//设置只读（true时只读，用于展示代码）
+							editor.setReadOnly(false);
+							//自动换行,设置为off关闭
+							editor.setOption("wrap", "free")
+							//启用提示菜单
+							ace.require("ace/ext/language_tools");
+							editor.setOptions({
+								enableBasicAutocompletion: true,
+		                   		enableSnippets: true,
+		                    	enableLiveAutocompletion: true
+		                	});
+		                	editor.setValue("");
+		                	get_last_submit({{ problem['problem_id'] }});
+		            	</script>
+		            	<p align="right">
+		            		<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" onclick="submit({{ problem['problem_id'] }})">submit
+		            		</button>
+		            	</p>
+
+		            	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		            		<div class="modal-dialog" style="width: 900px;">
+		            			<div class="modal-content">
+		            				<div class="modal-header">
+		            					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		            					<h4 class="modal-title" id="myModalLabel">提交结果</h4>
+		            				</div>
+		            				<div id="_modalDialog_body" class="modal-body">
+		            					<table class="table table-striped">
+		            						<thead>
+		            							<tr>
+		            								<th>提交时间</th>
+		            								<th>状态</th>
+		            								<th>分数</th>
+		            								<th>题目</th>
+		            								<th>编译器</th>
+		            								<th>用户</th>
+		            							</tr>
+		            						</thead>
+		            						<tbody>
+		            							<tr>
+		            								<td></td>
+		            								<td id="result" class="text-muted">评测中</td>
+		            								<td></td>
+		            								<td></td>
+		            								<td></td>
+		            								<td>{{ user['username'] }}</td>
+		            							</tr>
+		            						</tbody>
+		            					</table>
+		            					<table id="result_table" class="table ">
+		            						<thead>
+		            							<tr>
+		            								<th>测试点</th>
+		            								<th>结果</th>
+		            								<th>耗时</th>
+		            								<th>内存</th>
+		            							</tr>
+		            						</thead>
+		            						<tbody>
+		            						</tbody>
+		            					</table>
+		            				</div>
+		            				<div id="source_code" class="">
+		            					<p style="margin:0px 35px 10px 35px;"><strong>源代码</strong></p>
+		            					<pre id="show_code" class="ace_editor" style="min-height:300px; width: 840px; height: 300px; left: 30px;">
+											<textarea class="ace_text-input"></textarea>
+										</pre>
+										<script>
+											//初始化对象
+											show_editor = ace.edit("show_code");
+											//设置风格和语言（更多风格和语言，请到github上相应目录查看）
+											theme = "clouds"
+											language = "c_cpp"
+											show_editor.session.setMode("ace/mode/" + language);
+											//字体大小
+											show_editor.$blockScrolling = Infinity;
+											show_editor.setFontSize(15);
+											//设置只读（true时只读，用于展示代码）
+											show_editor.setReadOnly(true);
+											//自动换行,设置为off关闭
+											show_editor.setOption("wrap", "free")
+											//启用提示菜单
+											ace.require("ace/ext/language_tools");
+											show_editor.setOptions({
+												enableBasicAutocompletion: true,
+		                   						enableSnippets: true,
+		                    					enableLiveAutocompletion: true
+		                					});
+		                					show_editor.setValue("");
+		            					</script>
+		            				</div>
+		            				<div id="compile_information" class="hidden">
+		            					<p style="margin:0px 35px 10px 35px;"><strong>编译器输出</strong></p>
+		            					<pre style="margin:0px 30px 30px 30px;">
+		            					</pre>
+		            				</div>
+		            				<div class="modal-footer">
+		            					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+		            					<button id="refresh" type="button" class="btn btn-primary">刷新</button>
+		            				</div>
+		            			</div><!-- /.modal-content -->
+		            		</div><!-- /.modal -->
+		            	</div>
+					</div>
+				</div>
+			</div>
+			{% endblock %}

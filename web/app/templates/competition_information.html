@@ -1,0 +1,58 @@
+			{% extends 'base.html' %}
+
+			{% block content %}
+			<div class="container">
+				<div class="col-md-12 base-boder">
+					{% if competition %}
+					<br>
+					<ul class="nav nav-tabs">
+						<li class="active"><a href="/competition/{{ competition['competition_id'] }}/">题目列表</a></li>
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown">题目信息 <span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								{% for i in range(competition['problem_count']) %}
+								<li>
+									<a href="/competition/{{ competition['competition_id'] }}/{{ i+1 }}">{{ i+1 }}</a>
+								</li>
+								{% endfor %}
+							</ul>
+						</li>
+						<li><a href="/competition/{{ competition['competition_id'] }}/rank/">排名</a></li>
+						<li><a href="/competition/{{ competition['competition_id'] }}/history/">提交列表</a></li>
+					</ul>
+					{% endif %}
+					<div class="col-md-12" style="background:#FFFFFF">
+						<br>
+						<table class="table">
+							<thead> 
+								<tr>
+									<th>序号</th>
+									<th>标题</th>
+									<th>总分</th>
+									<th>通过</th>
+									<th>提交</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>	
+								{% for problem in competition['problems'] %}
+								<tr>
+									<td>{{ problem['id'] }}</td>
+									<td><a onclick="window.location.href = '/competition/{{ competition['competition_id'] }}/{{ problem['id'] }}/';">{{ problem['title'] }}</a></td>
+									<td>{{ problem['total_score'] }}</td>
+									<td>{{ problem['accepted'] }}</td>
+									<td>{{ problem['submit'] }}</td>
+									<td class="text-success">
+										{% if problem['is_accepted'] == 1 %}
+										Accepted
+										{% endif %}
+									</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			{% endblock %}

@@ -1,0 +1,23 @@
+			{% extends 'base.html' %}
+
+			{% block content %}
+			<div class="container">
+				{% for news in news_ls %}
+				<div class="row col-md-12 base-boder" style="background: #FFFFFF; margin-bottom: 12px;">
+					<div class="page-header col-md-12">
+						<h4>
+							{{ news['title'] }}
+							<br>
+							<small class="pull-right">发布日期:{{ news['date'] }}</small>
+							<small class="pull-right">发布者:{{ news['username'] }}&nbsp;</small>
+						</h4>
+					</div>
+					<div class="col-md-12">
+						<br>
+						<p>{{ news['content']|safe }}<p>
+						<br>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+			{% endblock %}

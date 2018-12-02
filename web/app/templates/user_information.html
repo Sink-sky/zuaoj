@@ -1,0 +1,73 @@
+			{% extends 'base.html' %}
+
+			{% block content %}
+			<div class="container">
+				<div class="row col-md-10 col-md-offset-1 base-boder" style="background: #FFFFFF">
+					<div class="page-header col-md-12">
+						<h4>个人信息
+						</h4>
+					</div>
+					<div class="col-md-12">
+						<br>
+						<div class="row">
+							<div class="col-md-2">
+								<label style="font-weight: 400">用户名:</label>
+							</div>
+							<div class="col-md-10">
+								<label style="font-weight: 400">{{ user['username'] }}</label>
+							</div>
+						</div>
+						<br>
+						<div class="row">
+							<div class="col-md-2">
+								<label style="font-weight: 400">账号类型:</label>
+							</div>
+							<div class="col-md-10">
+								{% if user['identity'] == 0 %}
+								<label style="font-weight: 400">管理员</label>
+								{% elif user['identity'] == 1 %}
+								<label style="font-weight: 400">教师</label>
+								{% elif user['identity'] == 2 %}
+								<label style="font-weight: 400">学生</label>
+								{% endif %}
+							</div>
+						</div>
+						<br>
+						<div class="row">
+							<div class="col-md-2">
+								<label style="font-weight: 400">学号:</label>
+							</div>
+							<div class="col-md-10">
+								{% if user['student_id'] %}
+								<label style="font-weight: 400">{{ user['student_id'] }}</label>
+								{% else %}
+								<div class="row">
+									<input type="text" id="student_id_input">
+									<a style="font-weight: 400" onclick="bind_student_id()">绑定</a>
+								</div>
+								{% endif %}
+							</div>
+						</div>
+						<br>
+						<div class="row">
+							<div class="col-md-2">
+								<label style="font-weight: 400">通过:</label>
+							</div>
+							<div class="col-md-10">
+								<label style="font-weight: 400">{{ user['accepted'] }}</label>
+							</div>
+						</div>
+						<br>
+						<div class="row">
+							<div class="col-md-2">
+								<label style="font-weight: 400">提交:</label>
+							</div>
+							<div class="col-md-10">
+								<label style="font-weight: 400">{{ user['submit'] }}</label>
+							</div>
+						</div>
+						<br>
+					</div>
+				</div>
+			</div>
+			{% endblock %}

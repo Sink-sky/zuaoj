@@ -1,0 +1,55 @@
+			{% extends 'base.html' %}
+
+			{% block content %}
+			<div class="container">
+				<div class="col-md-12 base-boder">
+					{% if competition %}
+					<br>
+					<ul class="nav nav-tabs">
+						<li><a href="/competition/{{ competition['competition_id'] }}/">题目列表</a></li>
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown">题目信息 <span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								{% for i in range(competition['problem_count']) %}
+								<li>
+									<a href="/competition/{{ competition['competition_id'] }}/{{ i+1 }}">{{ i+1 }}</a>
+								</li>
+								{% endfor %}
+							</ul>
+						</li>
+						<li class="active"><a href="/competition/{{ competition['competition_id'] }}/rank/">排名</a></li>
+						<li><a href="/competition/{{ competition['competition_id'] }}/history/">提交列表</a></li>
+					</ul>
+					{% endif %}
+					<div class="col-md-12" style="background:#FFFFFF">
+						<br>
+						<table class="table">
+							<thead>
+								<tr>
+									<th>排名</th>
+									<th>用户名</th>
+									<th>总分</th>
+									{% for i in range(competition['problem_count']) %}
+									<th>{{ i+1 }}</th>
+									{% endfor %}
+								</tr>
+							</thead>
+							<tbody>
+								{% for user_status in user_status_ls %}
+								<tr>
+									<td>{{ user_status['rank'] }}</td>
+									<td>{{ user_status['username'] }}</td>
+									<td>{{ user_status['total_score'] }}</td>
+									{% for i in range(competition['problem_count']) %}						
+									<td>{{ user_status['score'][i] }}
+									</td>
+									{% endfor %}
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			
+			{% endblock %}

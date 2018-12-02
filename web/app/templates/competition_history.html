@@ -1,0 +1,81 @@
+			{% extends 'base.html' %}
+
+			{% block content %}
+			<div class="container">
+				<div class="col-md-12 base-boder">
+					{% if competition %}
+					<br>
+					<ul class="nav nav-tabs">
+						<li><a href="/competition/{{ competition['competition_id'] }}/">题目列表</a></li>
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown">题目信息 <span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								{% for i in range(competition['problem_count']) %}
+								<li>
+									<a href="/competition/{{ competition['competition_id'] }}/{{ i+1 }}">{{ i+1 }}</a>
+								</li>
+								{% endfor %}
+							</ul>
+						</li>
+						<li><a href="/competition/{{ competition['competition_id'] }}/rank/">排名</a></li>
+						<li class="active"><a href="/competition/{{ competition['competition_id'] }}/history/">提交列表</a></li>
+					</ul>
+					{% endif %}
+					<div class="col-md-12" style="background:#FFFFFF">
+						<br>
+						<table class="table">
+							<thead>
+								<tr>
+									<th>id</th>
+									<th>提交时间</th>
+									<th>题目</th>
+									<th>状态</th>
+									<th>类型</th>
+									<th>用户名</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for result in result_ls %}
+								<tr>
+									<td>{{ result['submit_id'] }}</td>
+									<td>{{ result['time'] }}</td>
+									<td>{{ result['problem_id'] }}</td>
+									{% if result['total_status'] == 0 %}
+									<td class="text-success">全部正确</td>
+									{% elif result['total_status'] == 1 %}
+									<td class="text-danger">部分正确</td>
+									{% elif result['total_status'] == 2 %}
+									<td class="text-danger">全部错误</td>
+									{% elif result['total_status'] == 3 %}
+									<td class="text-primary">编译错误</td>
+									{% endif %}
+									<td>{{ result['type'] }}</td>
+									<td>{{ result['username'] }}</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+						<div class="pull-left">
+						<ul class="pagination">
+							{% for url in urls %}
+							{% if url['now'] %}
+							<li><a {% if not urls[0]['now'] %} href="{{ url['value'] }}{{ url['id'] - 1 }}" {% endif %}>&laquo;</a></li>
+							{% endif %}
+							{% endfor %}
+
+							{% for url in urls %}
+							<li {% if url['now'] %}class="active"{% endif %}><a href="{{ url['value'] }}{{ url['id'] }}">{{ url['id'] }}</a></li>
+							{% endfor %}
+
+							{% for url in urls %}
+							{% if url['now'] %}
+							<li><a {% if not urls[-1]['now'] %} href="{{ url['value'] }}{{ url['id'] + 1 }}" {% endif %}>&raquo;</a></li>
+							{% endif %}
+							{% endfor %}
+						</ul>
+					</div>
+					</div>
+				</div>
+			</div>
+			
+			{% endblock %}
